@@ -15,7 +15,7 @@ roteador.get('/', async (requisicao, resposta) => {
     resposta.status(200)
     const serializador = new SerializadorCidade(
         resposta.getHeader('Content-Type'),
-        ['empresa']
+        []
     )
     resposta.send(
         serializador.serializar(resultados)
@@ -28,7 +28,7 @@ roteador.get('/procurarPorEstado/:estadoCidade', async (requisicao, resposta) =>
     resposta.status(200)
     const serializador = new SerializadorCidade(
         resposta.getHeader('Content-Type'),
-        ['empresa']
+        []
     )
     resposta.send(
         serializador.serializar(resultados)
@@ -42,7 +42,7 @@ roteador.post('/', async (requisicao, resposta, proximo) => {
         resposta.status(201)
         const serializador = new SerializadorCidade(
             resposta.getHeader('Content-Type'),
-            ['empresa']
+            []
         )
         resposta.send(
             serializador.serializar(cidade)
@@ -67,7 +67,7 @@ roteador.get('/:idCidade', async (requisicao, resposta, proximo) => {
         resposta.status(200)
         const serializador = new SerializadorCidade(
             resposta.getHeader('Content-Type'),
-            ['email', 'empresa', 'dataCriacao', 'dataAtualizacao', 'versao']
+            []
         )
         resposta.send(
             serializador.serializar(cidade)
@@ -84,7 +84,7 @@ roteador.get('/procurarPorNome/:nomeCidade', async (requisicao, resposta, proxim
         resposta.status(200)
         const serializador = new SerializadorCidade(
             resposta.getHeader('Content-Type'),
-            ['email', 'empresa', 'dataCriacao', 'dataAtualizacao', 'versao']
+            []
         )
         resposta.send(
             serializador.serializar(cidade)
@@ -122,20 +122,6 @@ roteador.delete('/:idCidade', async (requisicao, resposta, proximo) => {
 })
 
 
-const verificarCidade = async (requisicao, resposta, proximo) => {
-    try {
-        const id = requisicao.params.idCidade
-        const cidade = new Cidade({ id: id })
-        await cidade.carregar()
-        requisicao.Cidade = cidade
-        proximo()
-    } catch (erro) {
-        proximo(erro)
-    }
-}
-
-const roteadorClientes = require('./clientes')
-
 const verificarCidades = async (requisicao, resposta, proximo) => {
     try {
         const id = requisicao.params.idCidade
@@ -148,6 +134,5 @@ const verificarCidades = async (requisicao, resposta, proximo) => {
     }
 }
 
-roteador.use('/:idCidade/clientes', verificarCidades, roteadorClientes)
 
 module.exports = roteador

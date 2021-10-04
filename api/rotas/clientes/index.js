@@ -65,7 +65,7 @@ roteador.get('/:id', async (requisicao, resposta, proximo) => {
         await cliente.carregar()
         const serializador = new Serializador(
             resposta.getHeader('Content-Type'),
-            ['preco', 'estoque', 'fornecedor', 'dataCriacao', 'dataAtualizacao', 'versao']
+            []
         )
         resposta.send(
             serializador.serializar(cliente)
@@ -84,30 +84,11 @@ roteador.get('/procurarPorNome/:nomeCliente', async (requisicao, resposta, proxi
         await cliente.carregarPorNome()
         const serializador = new Serializador(
             resposta.getHeader('Content-Type'),
-            ['preco', 'estoque', 'fornecedor', 'dataCriacao', 'dataAtualizacao', 'versao']
+            []
         )
         resposta.send(
             serializador.serializar(cliente)
         )
-    } catch (erro) {
-        proximo(erro)
-    }
-})
-
-roteador.head('/:id', async (requisicao, resposta, proximo) => {
-    try {
-        const dados = {
-            id: requisicao.params.id,
-            fornecedor: requisicao.fornecedor.id
-        }
-    
-        const produto = new Produto(dados)
-        await produto.carregar()
-        resposta.set('ETag', produto.versao)
-        const timestamp = (new Date(produto.dataAtualizacao)).getTime()
-        resposta.set('Last-Modified', timestamp)
-        resposta.status(200)
-        resposta.end()
     } catch (erro) {
         proximo(erro)
     }
@@ -128,34 +109,6 @@ roteador.put('/:id', async (requisicao, resposta, proximo) => {
         await cliente.atualizar()
         await cliente.carregar()
         
-        resposta.status(204)
-        resposta.end()
-    } catch (erro) {
-        proximo(erro)
-    }
-})
-
-roteador.options('/:id/diminuir-estoque', (requisicao, resposta) => {
-    resposta.set('Access-Control-Allow-Methods', 'POST')
-    resposta.set('Access-Control-Allow-Headers', 'Content-Type')
-    resposta.status(204)
-    resposta.end()
-})
-
-roteador.post('/:id/diminuir-estoque', async (requisicao, resposta, proximo) => {
-    try {
-        const produto = new Produto({
-            id: requisicao.params.id,
-            fornecedor: requisicao.fornecedor.id
-        })
-    
-        await produto.carregar()
-        produto.estoque = produto.estoque - requisicao.body.quantidade
-        await produto.diminuirEstoque()
-        await produto.carregar()
-        resposta.set('ETag', produto.versao)
-        const timestamp = (new Date(produto.dataAtualizacao)).getTime()
-        resposta.set('Last-Modified', timestamp)
         resposta.status(204)
         resposta.end()
     } catch (erro) {
