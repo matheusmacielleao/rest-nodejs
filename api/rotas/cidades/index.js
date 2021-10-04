@@ -50,15 +50,15 @@ roteador.options('/:idCidade', (requisicao, resposta) => {
 roteador.get('/:idCidade', async (requisicao, resposta, proximo) => {
     try {
         const id = requisicao.params.idCidade
-        const Cidade = new Cidade({ id: id })
-        await Cidade.carregar()
+        const cidade = new Cidade({ id: id })
+        await cidade.carregar()
         resposta.status(200)
         const serializador = new SerializadorCidade(
             resposta.getHeader('Content-Type'),
             ['email', 'empresa', 'dataCriacao', 'dataAtualizacao', 'versao']
         )
         resposta.send(
-            serializador.serializar(Cidade)
+            serializador.serializar(cidade)
         )
     } catch (erro) {
         proximo(erro)
