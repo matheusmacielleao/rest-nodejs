@@ -2,7 +2,7 @@ const TabelaCidade = require('./TabelaCidade')
 const CampoInvalido = require('../../erros/CampoInvalido')
 const DadosNaoFornecidos = require('../../erros/DadosNaoFornecidos')
 
-class Fornecedor {
+class Cidade {
     constructor ({ id, estado, nome}) {
         this.id = id
         this.estado = estado
@@ -26,6 +26,12 @@ class Fornecedor {
         this.estado = encontrado.estado
         this.nome = encontrado.nome
         
+    }
+
+    async carregarPorNome() {
+        const encontrado = await TabelaCidade.pegarPorNome(this.nome)
+        this.estado = encontrado.estado
+        this.id= encontrado.id
     }
 
     async atualizar () {
@@ -65,4 +71,4 @@ class Fornecedor {
     }
 }
 
-module.exports = Fornecedor
+module.exports = Cidade

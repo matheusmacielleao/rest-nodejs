@@ -22,6 +22,18 @@ roteador.get('/', async (requisicao, resposta) => {
     )
 })
 
+roteador.get('/procurarPorEstado/:estadoCidade', async (requisicao, resposta) => {
+    const estado = requisicao.params.estadoCidade
+    const resultados = await TabelaCidade.listarPorEstado(estado)
+    resposta.status(200)
+    const serializador = new SerializadorCidade(
+        resposta.getHeader('Content-Type'),
+        ['empresa']
+    )
+    resposta.send(
+        serializador.serializar(resultados)
+    )
+})
 roteador.post('/', async (requisicao, resposta, proximo) => {
     try {
         const dadosRecebidos = requisicao.body
@@ -64,14 +76,31 @@ roteador.get('/:idCidade', async (requisicao, resposta, proximo) => {
         proximo(erro)
     }
 })
+roteador.get('/procurarPorNome/:nomeCidade', async (requisicao, resposta, proximo) => {
+    try {
+        const nome = requisicao.params.nomeCidade
+        const cidade = new Cidade({ nome:nome })
+        await cidade.carregarPorNome()
+        resposta.status(200)
+        const serializador = new SerializadorCidade(
+            resposta.getHeader('Content-Type'),
+            ['email', 'empresa', 'dataCriacao', 'dataAtualizacao', 'versao']
+        )
+        resposta.send(
+            serializador.serializar(cidade)
+        )
+    } catch (erro) {
+        proximo(erro)
+    }
+})
 
 roteador.put('/:idCidade', async (requisicao, resposta, proximo) => {
     try {
         const id = requisicao.params.idCidade
         const dadosRecebidos = requisicao.body
         const dados = Object.assign({}, dadosRecebidos, { id: id })
-        const Cidade = new Cidade(dados)
-        await Cidade.atualizar()
+        const cidade = new Cidade(dados)
+        await cidade.atualizar()
         resposta.status(204)
         resposta.end()
     } catch (erro) {
@@ -82,9 +111,9 @@ roteador.put('/:idCidade', async (requisicao, resposta, proximo) => {
 roteador.delete('/:idCidade', async (requisicao, resposta, proximo) => {
     try {
         const id = requisicao.params.idCidade
-        const Cidade = new Cidade({ id: id })
-        await Cidade.carregar()
-        await Cidade.remover()
+        const cidade = new Cidade({ id: id })
+        await cidade.carregar()
+        await cidade.remover()
         resposta.status(204)
         resposta.end()
     } catch (erro) {

@@ -5,6 +5,13 @@ module.exports = {
     listar () {
         return Modelo.findAll({ raw: true })
     },
+    listarPorEstado(estado) {
+        return Modelo.findAll({ 
+            where: {
+                estado: estado
+            },
+            raw: true })
+    },
     inserir (cidade) {
         return Modelo.create(cidade)
     },
@@ -16,7 +23,21 @@ module.exports = {
         })
 
         if (!encontrado) {
-            throw new NaoEncontrado('Fornecedor')
+            throw new NaoEncontrado('Cidade')
+        }
+
+        return encontrado
+    },
+    async pegarPorNome(nome) {
+        const encontrado = await Modelo.findOne({
+            where: {
+                nome: nome            
+            },
+            raw: true
+        })
+
+        if (!encontrado) {
+            throw new NaoEncontrado('Cidade')
         }
 
         return encontrado
