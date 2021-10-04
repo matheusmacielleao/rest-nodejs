@@ -8,6 +8,7 @@ const DadosNaoFornecidos = require('./erros/DadosNaoFornecidos')
 const ValorNaoSuportado = require('./erros/ValorNaoSuportado')
 const formatosAceitos = require('./Serializador').formatosAceitos
 const SerializadorErro = require('./Serializador').SerializadorErro
+const banco = require('./banco-de-dados/criarTabelas')
 
 app.use(bodyParser.json())
 
@@ -35,6 +36,8 @@ app.use((requisicao, resposta, proximo) => {
 
 const roteador = require('./rotas/cidades')
 app.use('/api/cidades', roteador)
+const roteador2 = require('./rotas/clientes')
+app.use('/api/clientes', roteador2)
 
 
 app.use((erro, requisicao, resposta, proximo) => {
@@ -63,5 +66,7 @@ app.use((erro, requisicao, resposta, proximo) => {
         })
     )
 })
+
+
 
 app.listen(config.get('api.porta'), () => console.log('A API está funcionando!'))

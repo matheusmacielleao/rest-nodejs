@@ -1,25 +1,29 @@
 const Sequelize = require('sequelize')
-const instancia = require('../../../banco-de-dados')
+const instancia = require('../../banco-de-dados')
 
 const colunas = {
-    titulo: {
+    nome_completo: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    preco: {
-        type: Sequelize.DOUBLE,
+    genero: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    estoque: {
+    idade: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0
     },
-    fornecedor: {
+    data_nascimento: {
+        type: Sequelize.DATE,
+        allowNull: false
+    },
+    cidade: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-            model: require('../ModeloTabelaFornecedor'),
+            model: require('../cidades/ModeloTabelaCidade'),
             key: 'id'
         }
     }
@@ -27,11 +31,9 @@ const colunas = {
 
 const opcoes = {
     freezeTableName: true,
-    tableName: 'produtos',
-    timestamps: true,
-    createdAt: 'dataCriacao',
-    updatedAt: 'dataAtualizacao',
-    version: 'versao'
+    tableName: 'cliente',
+    timestamps: false
+    
 }
 
-module.exports = instancia.define('produto', colunas, opcoes)
+module.exports = instancia.define('cliente', colunas, opcoes)

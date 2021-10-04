@@ -134,4 +134,20 @@ const verificarCidade = async (requisicao, resposta, proximo) => {
     }
 }
 
+const roteadorClientes = require('./clientes')
+
+const verificarCidades = async (requisicao, resposta, proximo) => {
+    try {
+        const id = requisicao.params.idCidade
+        const cidade = new Cidade({ id: id })
+        await cidade.carregar()
+        requisicao.cidade = cidade
+        proximo()
+    } catch (erro) {
+        proximo(erro)
+    }
+}
+
+roteador.use('/:idCidade/clientes', verificarCidades, roteadorClientes)
+
 module.exports = roteador
